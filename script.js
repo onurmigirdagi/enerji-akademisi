@@ -76,18 +76,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const displayName = document.getElementById('user-display-name');
 
     // Toggle Login/Register Mode
+    const confirmPasswordGroup = document.getElementById('confirm-password-group');
+    const passwordConfirmInput = document.getElementById('password-confirm');
+
     toggleAuthBtn.addEventListener('click', (e) => {
         e.preventDefault();
         isLoginMode = !isLoginMode;
 
         if (isLoginMode) {
-            authTitle.textContent = 'Hoş Geldiniz';
+            authTitle.textContent = 'Giriş Yap';
             authBtn.querySelector('.btn-text').textContent = 'Giriş Yap';
             document.getElementById('toggle-text').innerHTML = 'Hesabınız yok mu? <a href="#" id="toggle-auth-btn">Kayıt Ol</a>';
+            confirmPasswordGroup.classList.add('hidden');
+            passwordConfirmInput.removeAttribute('required');
         } else {
             authTitle.textContent = 'Hesap Oluştur';
             authBtn.querySelector('.btn-text').textContent = 'Kayıt Ol';
             document.getElementById('toggle-text').innerHTML = 'Zaten hesabınız var mı? <a href="#" id="toggle-auth-btn">Giriş Yap</a>';
+            confirmPasswordGroup.classList.remove('hidden');
+            passwordConfirmInput.setAttribute('required', 'required');
         }
         // Re-attach listener since we replaced innerHTML
         document.getElementById('toggle-auth-btn').addEventListener('click', (e) => toggleAuthBtn.click());
@@ -111,6 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         const email = document.getElementById('email-input').value;
         const password = document.getElementById('password-input').value;
+        const passwordConfirm = document.getElementById('password-confirm').value;
 
         toggleLoading(true);
         authError.style.display = 'none';
@@ -125,6 +133,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (error) throw error;
                 handleLoginSuccess(data.user);
             } else {
+                // Password match validation
+                if (password !== passwordConfirm) {
+                    throw new Error('Şifreler eşleşmiyor.');
+                }
+
                 // Sign Up
                 const { data, error } = await _supabase.auth.signUp({
                     email: email,
