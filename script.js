@@ -438,7 +438,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         reportModal.classList.remove('hidden');
 
         // Store for course generation
-        createPlanBtn.onclick = () => generateCourses(level, moduleName, moduleDesc);
+        // Store for course generation & Persist Data
+        createPlanBtn.onclick = async () => {
+            const resultData = {
+                knowledge: scores.knowledge,
+                behavior: scores.behavior,
+                totalScore: totalScore,
+                level: level
+            };
+
+            // 1. Local Storage (Always)
+            localStorage.setItem('assessmentResults', JSON.stringify(resultData));
+
+            // 2. Supabase (If Logged In)
+            if (currentUser && !currentUser.is_anonymous) {
+                try {
+                    authBtn.textContent = 'Kaydediliyor...'; // Reuse button or show generic loading if visible, but this is inside modal
+                    createPlanBtn.textContent = 'Kaydediliyor...';
+                    createPlanBtn.disabled = true;
+
+                    const { error } = await _supabase
+                        .from('profiles')
+                        .update({
+                            scores: resultData,
+                            level: level,
+                            updated_at: new Date()
+                        })
+                        .eq('id', currentUser.id);
+
+                    if (error) throw error;
+                    console.log('Results saved to Supabase');
+                } catch (err) {
+                    console.error('Failed to save to Supabase:', err);
+                    // Continue anyway, local storage is fallback
+                } finally {
+                    createPlanBtn.textContent = 'Eğitim Planımı Oluştur';
+                    createPlanBtn.disabled = false;
+                }
+            }
+
+            generateCourses(level, moduleName, moduleDesc);
+        };
     }
 
     function generateCourses(level, moduleName, moduleDesc) {
