@@ -150,14 +150,16 @@ body {
     color: var(--text-muted);
 }
 
-.auth-toggle a {
+.auth-toggle a,
+.auth-toggle a:visited,
+.auth-toggle a:active {
     color: var(--primary);
-    text-decoration: none;
+    text-decoration: none !important;
     font-weight: 600;
 }
 
 .auth-toggle a:hover {
-    text-decoration: underline;
+    text-decoration: underline !important;
 }
 
 .login-footer {
