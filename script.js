@@ -492,6 +492,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Store for course generation
         // Store for course generation & Persist Data
         createPlanBtn.onclick = async () => {
+            console.log("createPlanBtn clicked. Current User:", currentUser);
+
             const resultData = {
                 knowledge: scores.knowledge,
                 behavior: scores.behavior,
@@ -505,28 +507,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 2. Supabase (If Logged In)
             if (currentUser && !currentUser.is_anonymous) {
                 try {
-                    authBtn.textContent = 'Kaydediliyor...'; // Reuse button or show generic loading if visible, but this is inside modal
+                    authBtn.textContent = 'Kaydediliyor...';
                     createPlanBtn.textContent = 'Kaydediliyor...';
                     createPlanBtn.disabled = true;
 
-                    const { error } = await _supabase
+                    // Use Upsert for reliability
+                    const { data, error } = await _supabase
                         .from('profiles')
-                        .update({
+                        .upsert({
+                            id: currentUser.id,
+                            email: currentUser.email,
+                            username: currentUser.user_metadata?.username || currentUser.email.split('@')[0],
                             scores: resultData,
                             level: level,
                             updated_at: new Date()
-                        })
-                        .eq('id', currentUser.id);
+                        }, { onConflict: 'id' }).select();
 
                     if (error) throw error;
-                    console.log('Results saved to Supabase');
+
+                    console.log('Results saved to Supabase successfully:', data);
+                    // Optional: Show a toast? 
+                    // alert('Sonuçlarınız başarıyla kaydedildi!'); 
+
                 } catch (err) {
                     console.error('Failed to save to Supabase:', err);
-                    // Continue anyway, local storage is fallback
+                    alert('Hata: Değerlendirme sonuçları veritabanına kaydedilemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.\n\nHata Detayı: ' + err.message);
+                    // We continue anyway because local storage is a fallback
                 } finally {
                     createPlanBtn.textContent = 'Eğitim Planımı Oluştur';
                     createPlanBtn.disabled = false;
                 }
+            } else {
+                console.log('User is guest or not logged in. Skipping DB save.');
             }
 
             generateCourses(level, moduleName, moduleDesc);
