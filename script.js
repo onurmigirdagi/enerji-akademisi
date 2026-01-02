@@ -211,16 +211,47 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Load Data from Supabase if not guest
             if (!user.is_anonymous) {
-                const { data, error } = await _supabase
+                let { data, error } = await _supabase
                     .from('profiles')
                     .select('scores, level')
                     .eq('id', user.id)
                     .single();
 
-                if (error) {
-                    console.error('Error fetching profile:', error);
+                // Self-Healing: If profile missing, create it now
+                if (error || !data) {
+                    console.log('Profile missing or fetch error. Attempting to create/recover...', error);
+
+                    const localResults = JSON.parse(localStorage.getItem('assessmentResults'));
+                    const payload = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.user_metadata?.username || user.email.split('@')[0],
+                        updated_at: new Date(),
+                        scores: localResults || null, // Sync UP immediately if we have data
+                        level: localResults ? localResults.level : null
+                    };
+
+                    const insertRes = await _supabase.from('profiles').insert(payload).select().single();
+
+                    if (insertRes.error) {
+                        console.error('Critical: Failed to create profile recovery.', insertRes.error);
+                    } else {
+                        console.log('Profile recovered successfully.');
+                        data = insertRes.data;
+                        error = null;
+
+                        // If we just pushed local results, update UI
+                        if (localResults) {
+                            document.getElementById('assessment-cta').classList.add('hidden');
+                            const grid = document.getElementById('personalized-grid');
+                            grid.classList.remove('hidden');
+                            renderModuleCard(localResults.level, grid);
+                            return; // Done
+                        }
+                    }
                 }
 
+                // Existing Sync Logic (if profile was found or created without data)
                 if (data && data.scores) {
                     // Scenario 1: DB has data -> SYNC DOWN
                     console.log('Found remote data, syncing down...');
@@ -235,7 +266,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const grid = document.getElementById('personalized-grid');
                     grid.classList.remove('hidden');
                     renderModuleCard(data.level, grid);
-                } else {
+                } else if (data) {
                     // Scenario 2: DB is empty, check Local Storage -> SYNC UP
                     const localResults = JSON.parse(localStorage.getItem('assessmentResults'));
                     if (localResults) {
