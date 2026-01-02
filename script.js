@@ -71,9 +71,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const authTitle = document.getElementById('auth-title');
     const authError = document.getElementById('auth-error');
 
-    const loginWrapper = document.getElementById('login-section');
-    const dashboard = document.getElementById('dashboard-section');
-    const displayName = document.getElementById('user-display-name');
 
     // Toggle Login/Register Mode
     const confirmPasswordGroup = document.getElementById('confirm-password-group');
