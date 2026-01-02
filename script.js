@@ -519,26 +519,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                     createPlanBtn.innerHTML = 'Kaydediliyor...';
                     createPlanBtn.disabled = true;
 
-                    // Targeted UPDATE - assume profile exists (due to triggers/healing)
-                    const { data, error } = await _supabase
-                        .from('profiles')
-                        .update({
-                            scores: resultData,
-                            level: level,
-                            updated_at: new Date()
-                        })
-                        .eq('id', currentUser.id)
-                        .select();
+                    // USE RPC (Server-Side Function) for maximum reliability
+                    console.log('Calling RPC update_assessment_results...');
+                    const { error } = await _supabase.rpc('update_assessment_results', {
+                        p_scores: resultData,
+                        p_level: level
+                    });
 
                     if (error) {
                         throw error;
                     }
 
-                    console.log('Update success:', data);
+                    console.log('RPC Success');
                     alert('✅ Değerlendirme sonucunuz veritabanına başarıyla kaydedildi.');
 
                 } catch (err) {
-                    console.error('Update failed:', err);
+                    console.error('RPC failed:', err);
                     alert('❌ KAYIT HATASI: ' + err.message + '\n\nİnternet bağlantınızı kontrol edin.');
                 } finally {
                     createPlanBtn.textContent = 'Eğitim Planımı Oluştur';

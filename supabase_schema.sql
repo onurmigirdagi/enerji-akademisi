@@ -37,3 +37,19 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- RPC Function to safely update assessment results
+create or replace function public.update_assessment_results(
+  p_scores jsonb,
+  p_level int
+)
+returns void as $$
+begin
+  update public.profiles
+  set 
+    scores = p_scores,
+    level = p_level,
+    updated_at = now()
+  where id = auth.uid();
+end;
+$$ language plpgsql security definer;
