@@ -223,9 +223,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     .eq('id', user.id)
                     .single();
 
+                if (error) {
+                    console.error('Error fetching profile:', error);
+                }
+
                 if (data && data.scores) {
-                    // Convert DB format to local app format if needed, or directly use
-                    // For compatibility while switching, we can sync to localStorage
+                    // Scenario 1: DB has data -> SYNC DOWN
+                    console.log('Found remote data, syncing down...');
                     localStorage.setItem('assessmentResults', JSON.stringify({
                         knowledge: data.scores.knowledge,
                         behavior: data.scores.behavior,
@@ -233,11 +237,34 @@ document.addEventListener('DOMContentLoaded', async () => {
                         level: data.level
                     }));
 
-                    // Update UI
                     document.getElementById('assessment-cta').classList.add('hidden');
                     const grid = document.getElementById('personalized-grid');
                     grid.classList.remove('hidden');
                     renderModuleCard(data.level, grid);
+                } else {
+                    // Scenario 2: DB is empty, check Local Storage -> SYNC UP
+                    const localResults = JSON.parse(localStorage.getItem('assessmentResults'));
+                    if (localResults) {
+                        console.log('Found local data but no remote data. Syncing UP...');
+                        try {
+                            await _supabase.from('profiles').update({
+                                scores: localResults,
+                                level: localResults.level,
+                                updated_at: new Date()
+                            }).eq('id', user.id);
+                            console.log('Sync UP successful.');
+
+                            // UI Update
+                            document.getElementById('assessment-cta').classList.add('hidden');
+                            const grid = document.getElementById('personalized-grid');
+                            grid.classList.remove('hidden');
+                            renderModuleCard(localResults.level, grid);
+                        } catch (err) {
+                            console.error('Sync UP failed:', err);
+                        }
+                    } else {
+                        console.log('No data found locally or remotely.');
+                    }
                 }
             } else {
                 // Check localStorage for guest
