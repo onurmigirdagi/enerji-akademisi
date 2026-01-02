@@ -4,9 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enerji Akademisi</title>
+    <title>Enerji Akademisi - Kişisel Gelişim Platformu</title>
 
-    <!-- Google Fonts: Inter for that clean modern app feel -->
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -37,8 +40,8 @@
             <!-- Right Side: Form -->
             <div class="login-form-wrapper">
                 <div class="form-content">
-                    <h2>Giriş Yap</h2>
-                    <p class="subtitle">Eğitim platformunuza erişmek için hesabınızı doğrulayın.</p>
+                    <h2 id="auth-title">Giriş Yap</h2>
+                    <p class="subtitle" id="auth-desc">Eğitim platformunuza erişmek için hesabınızı doğrulayın.</p>
 
                     <form id="login-form">
                         <div class="form-group">
@@ -49,17 +52,23 @@
 
                         <div class="form-group">
                             <label for="password-input">Şifre</label>
-                            <input type="password" id="password-input" placeholder="••••••••" required>
+                            <input type="password" id="password-input" placeholder="••••••••" minlength="6" required>
                         </div>
 
-                        <button type="submit" id="login-btn" class="primary-btn">
+                        <button type="submit" id="auth-btn" class="primary-btn">
                             <span class="btn-text">Giriş Yap</span>
                             <div class="loader-spinner hidden"></div>
                         </button>
 
+                        <div class="auth-toggle">
+                            <p id="toggle-text">Hesabınız yok mu? <a href="#" id="toggle-auth-btn">Kayıt Ol</a></p>
+                        </div>
+
                         <button type="button" id="guest-btn" class="text-link">
                             Misafir Girişi
                         </button>
+
+                        <p id="auth-error" class="auth-error"></p>
                     </form>
                 </div>
             </div>
@@ -158,9 +167,7 @@
                 </div>
                 <div class="modal-body">
                     <h4 id="question-text">Soru metni buraya gelecek...</h4>
-                    <div id="options-container" class="options-list">
-                        <!-- Options injected by JS -->
-                    </div>
+                    <div id="options-container" class="options-grid"></div>
                 </div>
             </div>
         </div>
@@ -168,43 +175,31 @@
         <!-- REPORT MODAL -->
         <div id="report-modal" class="modal-overlay hidden">
             <div class="modal-card report-card">
-                <div class="modal-header center">
-                    <h3>Analiz Raporunuz Hazır</h3>
+                <div class="modal-header">
+                    <h3>Değerlendirme Raporu</h3>
                 </div>
                 <div class="modal-body">
-                    <div class="score-split">
-                        <!-- Knowledge Score Column -->
-                        <div class="score-box knowledge">
-                            <span class="score-label">BİLGİ SKORU</span>
-                            <span class="score-val" id="score-knowledge">0%</span>
-                            <div class="visual-bar-bg">
-                                <div id="bar-knowledge" class="visual-bar-fill" style="width: 0%"></div>
+                    <div class="score-section">
+                        <div class="score-item">
+                            <span class="score-label">Bilgi Düzeyi</span>
+                            <div class="score-bar">
+                                <div id="bar-knowledge" class="bar-fill knowledge"></div>
                             </div>
+                            <span id="score-knowledge" class="score-value">0/13</span>
                         </div>
-
-                        <!-- Separator -->
-                        <div class="score-divider"></div>
-
-                        <!-- Behavior Score Column -->
-                        <div class="score-box behavior">
-                            <span class="score-label">DAVRANIŞ SKORU</span>
-                            <span class="score-val" id="score-behavior">0%</span>
-                            <div class="visual-bar-bg">
-                                <div id="bar-behavior" class="visual-bar-fill" style="width: 0%"></div>
+                        <div class="score-item">
+                            <span class="score-label">Davranış Düzeyi</span>
+                            <div class="score-bar">
+                                <div id="bar-behavior" class="bar-fill behavior"></div>
                             </div>
+                            <span id="score-behavior" class="score-value">0/85</span>
                         </div>
                     </div>
-
-                    <div class="deficiency-list">
-                        <h4>🔍 Detaylı Analiz & Gelişim Alanları</h4>
-                        <ul id="deficiency-items">
-                            <!-- Items injected by JS -->
-                        </ul>
+                    <div class="deficiency-section">
+                        <h4>Sonuç ve Öneri</h4>
+                        <ul id="deficiency-items"></ul>
                     </div>
-
-                    <p class="plan-note">Sonuçlarınıza göre özel eğitim programınız hazırlandı.</p>
-                    <button id="create-plan-btn" class="primary-btn full-width">Kişiselleştirilmiş Programı
-                        Oluştur</button>
+                    <button id="create-plan-btn" class="primary-btn">Eğitim Planımı Oluştur</button>
                 </div>
             </div>
         </div>

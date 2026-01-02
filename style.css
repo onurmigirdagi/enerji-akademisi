@@ -135,6 +135,37 @@ body {
     margin-bottom: 2.5rem;
 }
 
+.auth-error {
+    color: #dc2626;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    text-align: center;
+    display: none;
+}
+
+.auth-toggle {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.auth-toggle a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-toggle a:hover {
+    text-decoration: underline;
+}
+
+.login-footer {
+    padding: 2rem;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+}
+
 .form-group {
     margin-bottom: 1.5rem;
 }

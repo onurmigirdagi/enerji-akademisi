@@ -18,78 +18,170 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Selectors
+    const supabaseUrl = 'https://hrshbpljdbyilwzuadoj.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhyc2hicGxqZGJ5aWx3enVhZG9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNjEyMTgsImV4cCI6MjA4MjkzNzIxOH0.AcGgZePLd0DXqNvvFULTwh9mXRZ7iI66kuhpf8bHkRs';
+
+    // Initialize Supabase
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    let currentUser = null;
+    let isLoginMode = true;
+
+    // Selectors
     const loginForm = document.getElementById('login-form');
-    const loginBtn = document.getElementById('login-btn');
+    const authBtn = document.getElementById('auth-btn');
     const guestBtn = document.getElementById('guest-btn');
+    const toggleAuthBtn = document.getElementById('toggle-auth-btn');
+    const authTitle = document.getElementById('auth-title');
+    const authError = document.getElementById('auth-error');
+
     const loginWrapper = document.getElementById('login-section');
     const dashboard = document.getElementById('dashboard-section');
     const displayName = document.getElementById('user-display-name');
 
+    // Toggle Login/Register Mode
+    toggleAuthBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        isLoginMode = !isLoginMode;
+
+        if (isLoginMode) {
+            authTitle.textContent = 'Hoş Geldiniz';
+            authBtn.querySelector('.btn-text').textContent = 'Giriş Yap';
+            document.getElementById('toggle-text').innerHTML = 'Hesabınız yok mu? <a href="#" id="toggle-auth-btn">Kayıt Ol</a>';
+        } else {
+            authTitle.textContent = 'Hesap Oluştur';
+            authBtn.querySelector('.btn-text').textContent = 'Kayıt Ol';
+            document.getElementById('toggle-text').innerHTML = 'Zaten hesabınız var mı? <a href="#" id="toggle-auth-btn">Giriş Yap</a>';
+        }
+        // Re-attach listener since we replaced innerHTML
+        document.getElementById('toggle-auth-btn').addEventListener('click', (e) => toggleAuthBtn.click());
+        authError.style.display = 'none';
+    });
+
     // Spinner Helper
     const toggleLoading = (isLoading) => {
-        const span = loginBtn.querySelector('.btn-text');
-        const loader = loginBtn.querySelector('.loader-spinner');
+        const span = authBtn.querySelector('.btn-text');
         if (isLoading) {
-            loginBtn.disabled = true;
-            span.textContent = 'Giriş Yapılıyor...';
+            authBtn.disabled = true;
+            span.textContent = 'İşleniyor...';
         } else {
-            loginBtn.disabled = false;
+            authBtn.disabled = false;
+            span.textContent = isLoginMode ? 'Giriş Yap' : 'Kayıt Ol';
         }
     };
 
-    // Login Action
-    loginForm.addEventListener('submit', (e) => {
+    // Main Auth Action
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('email-input').value;
-        const name = email.split('@')[0];
+        const password = document.getElementById('password-input').value;
 
-        startAuth(name, false);
+        toggleLoading(true);
+        authError.style.display = 'none';
+
+        try {
+            if (isLoginMode) {
+                // Login
+                const { data, error } = await _supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                if (error) throw error;
+                handleLoginSuccess(data.user);
+            } else {
+                // Sign Up
+                const { data, error } = await _supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            username: email.split('@')[0]
+                        }
+                    }
+                });
+                if (error) throw error;
+
+                // Create profile entry
+                if (data.user) {
+                    await _supabase.from('profiles').insert({
+                        id: data.user.id,
+                        username: email.split('@')[0],
+                        email: email,
+                        updated_at: new Date()
+                    });
+                    handleLoginSuccess(data.user);
+                }
+            }
+        } catch (error) {
+            console.error('Auth Error:', error);
+            authError.textContent = error.message === 'Invalid login credentials'
+                ? 'Hatalı e-posta veya şifre.'
+                : 'Bir hata oluştu: ' + error.message;
+            authError.style.display = 'block';
+            toggleLoading(false);
+        }
     });
 
     // Guest Action
     guestBtn.addEventListener('click', () => {
-        startAuth("Misafir", true);
+        handleLoginSuccess({ email: 'misafir@user.com', user_metadata: { username: 'Misafir' }, is_anonymous: true });
     });
 
-    function startAuth(username, isGuest) {
-        toggleLoading(true);
+    // Handle Successful Login
+    async function handleLoginSuccess(user) {
+        currentUser = user;
+        const name = user.user_metadata?.username || user.email.split('@')[0];
 
-        // Simulating modern fast API
-        setTimeout(() => {
-            // Capitalize first letter
-            const formattedName = username.charAt(0).toUpperCase() + username.slice(1);
-            displayName.textContent = formattedName;
+        // Capitalize
+        const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+        displayName.textContent = formattedName;
 
-            // Switch Views
-            loginWrapper.style.opacity = '0';
-            setTimeout(() => {
-                loginWrapper.classList.add('hidden');
-                dashboard.classList.remove('hidden');
-                // Subtle fade in
-                dashboard.animate([
-                    { opacity: 0, transform: 'translateY(20px)' },
-                    { opacity: 1, transform: 'translateY(0)' }
-                ], {
-                    duration: 400,
-                    easing: 'ease-out'
-                });
+        // Switch Views
+        loginWrapper.style.opacity = '0';
+        setTimeout(async () => {
+            loginWrapper.classList.add('hidden');
+            dashboard.classList.remove('hidden');
 
-                // Check for assessment results
+            dashboard.animate([
+                { opacity: 0, transform: 'translateY(20px)' },
+                { opacity: 1, transform: 'translateY(0)' }
+            ], { duration: 400, easing: 'ease-out' });
+
+            // Load Data from Supabase if not guest
+            if (!user.is_anonymous) {
+                const { data, error } = await _supabase
+                    .from('profiles')
+                    .select('scores, level')
+                    .eq('id', user.id)
+                    .single();
+
+                if (data && data.scores) {
+                    // Convert DB format to local app format if needed, or directly use
+                    // For compatibility while switching, we can sync to localStorage
+                    localStorage.setItem('assessmentResults', JSON.stringify({
+                        knowledge: data.scores.knowledge,
+                        behavior: data.scores.behavior,
+                        totalScore: data.scores.totalScore,
+                        level: data.level
+                    }));
+
+                    // Update UI
+                    document.getElementById('assessment-cta').classList.add('hidden');
+                    const grid = document.getElementById('personalized-grid');
+                    grid.classList.remove('hidden');
+                    renderModuleCard(data.level, grid);
+                }
+            } else {
+                // Check localStorage for guest
                 const results = JSON.parse(localStorage.getItem('assessmentResults'));
                 if (results) {
                     document.getElementById('assessment-cta').classList.add('hidden');
                     const grid = document.getElementById('personalized-grid');
                     grid.classList.remove('hidden');
-
-                    // Generate Module Card
                     renderModuleCard(results.level, grid);
                 }
+            }
 
-                // fetchEmissionData(); // Commented out simulation for flow clarity
-
-            }, 500);
-
-        }, 1200);
+        }, 500);
     }
 
     /* --- ASSESSMENT SYSTEM LOGIC --- */
