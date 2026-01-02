@@ -1,30 +1,67 @@
 /* Modern Logic script.js */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
-    // Check for dashboard hash
-    if (window.location.hash === '#dashboard') {
-        const loginWrapper = document.getElementById('login-section');
-        const dashboard = document.getElementById('dashboard-section');
-        const displayName = document.getElementById('user-display-name');
+    // Initialize Supabase FIRST
+    const supabaseUrl = 'https://hrshbpljdbyilwzuadoj.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhyc2hicGxqZGJ5aWx3enVhZG9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNjEyMTgsImV4cCI6MjA4MjkzNzIxOH0.AcGgZePLd0DXqNvvFULTwh9mXRZ7iI66kuhpf8bHkRs';
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    let currentUser = null;
+    let isLoginMode = true;
+
+    const loginWrapper = document.getElementById('login-section');
+    const dashboard = document.getElementById('dashboard-section');
+    const displayName = document.getElementById('user-display-name');
+
+    // Check for existing session on page load
+    const { data: { session } } = await _supabase.auth.getSession();
+
+    if (session && session.user) {
+        // User is already logged in, go straight to dashboard
+        currentUser = session.user;
+        const name = session.user.user_metadata?.username || session.user.email.split('@')[0];
+        const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+        displayName.textContent = formattedName;
 
         loginWrapper.classList.add('hidden');
         dashboard.classList.remove('hidden');
 
-        // Restore user name if available (mock)
-        displayName.textContent = 'Kullanıcı';
+        // Load user data
+        const { data } = await _supabase
+            .from('profiles')
+            .select('scores, level')
+            .eq('id', session.user.id)
+            .single();
 
-        // Clean URL
+        if (data && data.scores) {
+            localStorage.setItem('assessmentResults', JSON.stringify({
+                knowledge: data.scores.knowledge,
+                behavior: data.scores.behavior,
+                totalScore: data.scores.totalScore,
+                level: data.level
+            }));
+            document.getElementById('assessment-cta').classList.add('hidden');
+            const grid = document.getElementById('personalized-grid');
+            grid.classList.remove('hidden');
+            renderModuleCard(data.level, grid);
+        } else {
+            // Check localStorage
+            const results = JSON.parse(localStorage.getItem('assessmentResults'));
+            if (results) {
+                document.getElementById('assessment-cta').classList.add('hidden');
+                const grid = document.getElementById('personalized-grid');
+                grid.classList.remove('hidden');
+                renderModuleCard(results.level, grid);
+            }
+        }
+
+        // Clean URL if hash present
+        if (window.location.hash === '#dashboard') {
+            history.replaceState(null, null, 'index.html');
+        }
+    } else if (window.location.hash === '#dashboard') {
+        // No session but hash present - redirect to login
         history.replaceState(null, null, 'index.html');
     }
-
-    // Selectors
-    const supabaseUrl = 'https://hrshbpljdbyilwzuadoj.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhyc2hicGxqZGJ5aWx3enVhZG9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNjEyMTgsImV4cCI6MjA4MjkzNzIxOH0.AcGgZePLd0DXqNvvFULTwh9mXRZ7iI66kuhpf8bHkRs';
-
-    // Initialize Supabase
-    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
-    let currentUser = null;
-    let isLoginMode = true;
 
     // Selectors
     const loginForm = document.getElementById('login-form');
