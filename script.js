@@ -83,21 +83,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         isLoginMode = !isLoginMode;
 
+        const toggleMsg = document.getElementById('toggle-msg');
+
         if (isLoginMode) {
             authTitle.textContent = 'Giriş Yap';
             authBtn.querySelector('.btn-text').textContent = 'Giriş Yap';
-            document.getElementById('toggle-text').innerHTML = 'Hesabınız yok mu? <a href="#" id="toggle-auth-btn">Kayıt Ol</a>';
+            toggleMsg.textContent = 'Hesabınız yok mu? ';
+            toggleAuthBtn.textContent = 'Kayıt Ol';
             confirmPasswordGroup.classList.add('hidden');
             passwordConfirmInput.removeAttribute('required');
         } else {
             authTitle.textContent = 'Hesap Oluştur';
             authBtn.querySelector('.btn-text').textContent = 'Kayıt Ol';
-            document.getElementById('toggle-text').innerHTML = 'Zaten hesabınız var mı? <a href="#" id="toggle-auth-btn">Giriş Yap</a>';
+            toggleMsg.textContent = 'Zaten hesabınız var mı? ';
+            toggleAuthBtn.textContent = 'Giriş Yap';
             confirmPasswordGroup.classList.remove('hidden');
             passwordConfirmInput.setAttribute('required', 'required');
         }
-        // Re-attach listener since we replaced innerHTML
-        document.getElementById('toggle-auth-btn').addEventListener('click', (e) => toggleAuthBtn.click());
         authError.style.display = 'none';
     });
 
@@ -116,6 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Main Auth Action
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log('Form submitted. Mode:', isLoginMode ? 'Login' : 'Register');
         const email = document.getElementById('email-input').value;
         const password = document.getElementById('password-input').value;
         const passwordConfirm = document.getElementById('password-confirm').value;
