@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Değerlendirme Raporu - Enerji Akademisi</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Reuse core styles from profile/theme */
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #818CF8;
+            --green: #10b981;
+            --green-light: #34d399;
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --bg: #f9fafb;
+            --card-bg: #ffffff;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-y: auto;
+            /* Enable scrolling */
+        }
+
+        .header {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(79, 70, 229, 0.2);
+        }
+
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+        }
+
+        /* Progress Bars */
+        .progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .progress-info {
+            min-width: 150px;
+        }
+
+        .progress-info .name {
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-size: 1.1rem;
+        }
+
+        .progress-info .score {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 16px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 1s ease-out;
+        }
+
+        .progress-fill.purple {
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+
+        .progress-fill.green {
+            background: linear-gradient(90deg, var(--green), var(--green-light));
+        }
+
+        .progress-fill.gradient {
+            background: linear-gradient(90deg, var(--primary), var(--green));
+        }
+
+        .progress-percent {
+            font-weight: 800;
+            font-size: 1.25rem;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .progress-percent.purple {
+            color: var(--primary);
+        }
+
+        .progress-percent.green {
+            color: var(--green);
+        }
+
+        /* Analysis Grid */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        .analysis-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 1.25rem;
+            border-radius: 16px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .analysis-item.strength {
+            background: #ecfdf5;
+            border: 1px solid #d1fae5;
+            color: #065f46;
+        }
+
+        .analysis-item.weakness {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+
+        .analysis-item .icon {
+            font-size: 1.35rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Module Card */
+        .module-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+            border: 2px solid var(--green);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* CSS Book Icon */
+        .book-icon {
+            width: 24px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .book-icon::before {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: var(--primary);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .module-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .module-content {
+            flex: 1;
+        }
+
+        .module-content h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #065f46;
+        }
+
+        .module-content p {
+            color: #047857;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .module-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #059669;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.2);
+        }
+
+        .module-btn:hover {
+            background: #047857;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .progress-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+
+            .progress-info {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <a href="index.html" class="brand">
+            <div class="windmill">
+                <div class="blade"></div>
+                <div class="blade"></div>
+                <div class="blade"></div>
+            </div>
+            Enerji Akademisi
+        </a>
+        <a href="profile.html" class="back-btn">
+            Profilime Dön
+        </a>
+    </header>
+
+    <main class="main">
+        <div class="section-header">
+            <h1 class="section-title">Detaylı Performans Raporu</h1>
+            <p class="section-subtitle">Enerji farkındalığı değerlendirme sonuçlarınız ve öneriler</p>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="section">
+            <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text);">Puan Dağılımı
+            </h2>
+            <div class="progress-list">
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <div class="name">Bilgi Düzeyi</div>
+                        <div class="score" id="prog-k-score">0/13 puan</div>
+                    </div>
+                    <div class="progress-track">
+                        <div id="prog-k-fill" class="progress-fill purple" style="width: 0%"></div>
+                    </div>
+                    <div id="prog-k-pct" class="progress-percent purple">0%</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <div class="name">Davranış Düzeyi</div>
+                        <div class="score" id="prog-b-score">0/85 puan</div>
+                    </div>
+                    <div class="progress-track">
+                        <div id="prog-b-fill" class="progress-fill green" style="width: 0%"></div>
+                    </div>
+                    <div id="prog-b-pct" class="progress-percent green">0%</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <div class="name">Genel Başarı</div>
+                        <div class="score" id="prog-t-score">0/98 puan</div>
+                    </div>
+                    <div class="progress-track">
+                        <div id="prog-t-fill" class="progress-fill gradient" style="width: 0%"></div>
+                    </div>
+                    <div id="prog-t-pct" class="progress-percent purple">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Section -->
+        <div class="section">
+            <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text);">Güçlü ve
+                Gelişim Alanları</h2>
+            <div id="analysis-grid" class="analysis-grid">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <!-- Module Recommendation -->
+        <div class="section" style="border-color: var(--green); background: #f0fdf4;">
+            <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: #065f46;">Size Özel Eğitim
+                Önerisi</h2>
+            <div class="module-card">
+                <div class="module-icon">
+                    <div class="book-icon" style="width:32px;height:26px;border-width:3px;"></div>
+                </div>
+                <div class="module-content">
+                    <h4 id="module-title">Modül Yükleniyor...</h4>
+                    <p id="module-desc">Açıklama...</p>
+                    <a href="index.html" class="module-btn">Eğitime Başla →</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="profile.html" class="back-btn" style="padding: 16px 32px; font-size: 1rem;">
+                ← Profilime Dön
+            </a>
+        </div>
+    </main>
+
+    <script>
+        const data = JSON.parse(localStorage.getItem('assessmentResults'));
+
+        if (!data) {
+            window.location.href = 'index.html'; // Redirect if no data
+        } else {
+            const { knowledge, behavior, totalScore, level } = data;
+
+            const kPct = Math.round((knowledge / 13) * 100);
+            const bPct = Math.round((behavior / 85) * 100);
+            const tPct = Math.round((totalScore / 98) * 100);
+
+            // Animate progress bars
+            setTimeout(() => {
+                document.getElementById('prog-k-fill').style.width = `${kPct}%`;
+                document.getElementById('prog-b-fill').style.width = `${bPct}%`;
+                document.getElementById('prog-t-fill').style.width = `${tPct}%`;
+
+                document.getElementById('prog-k-score').textContent = `${knowledge}/13 puan`;
+                document.getElementById('prog-b-score').textContent = `${behavior}/85 puan`;
+                document.getElementById('prog-t-score').textContent = `${totalScore}/98 puan`;
+
+                document.getElementById('prog-k-pct').textContent = `${kPct}%`;
+                document.getElementById('prog-b-pct').textContent = `${bPct}%`;
+                document.getElementById('prog-t-pct').textContent = `${tPct}%`;
+            }, 300);
+
+            // Generate analysis
+            const grid = document.getElementById('analysis-grid');
+            const items = [];
+
+            if (kPct >= 70) {
+                items.push({ good: true, text: 'Enerji verimliliği teknik bilgi düzeyiniz mükemmel seviyede.' });
+            } else {
+                items.push({ good: false, text: 'Temel enerji verimliliği kavramları ve teknikleri konusunda bilgi eksikliğiniz var.' });
+            }
+
+            if (bPct >= 70) {
+                items.push({ good: true, text: 'Günlük yaşamınızda enerji tasarrufu alışkanlıklarını başarıyla uyguluyorsunuz.' });
+            } else {
+                items.push({ good: false, text: 'Günlük enerji kullanım davranışlarınızda tasarruf potansiyeli yüksek.' });
+            }
+
+            if (knowledge >= 10) items.push({ good: true, text: 'Enerji etiketlerini okuma ve verimli cihaz seçimi konusunda bilinçlisiniz.' });
+            if (behavior >= 60) items.push({ good: true, text: 'Ev aletleri ve aydınlatma kullanım alışkanlıklarınız verimli.' });
+            if (knowledge < 7) items.push({ good: false, text: 'Isı yalıtımı ve pasif verimlilik önlemleri hakkında daha fazla bilgiye ihtiyacınız var.' });
+            if (behavior < 40) items.push({ good: false, text: 'Standby (bekleme) modunda enerji tüketimi konusunda farkındalık kazanmalısınız.' });
+
+            grid.innerHTML = items.map(item => `
+                <div class="analysis-item ${item.good ? 'strength' : 'weakness'}">
+                    <span class="icon">${item.good ? '✅' : '⚠️'}</span>
+                    <span>${item.text}</span>
+                </div>
+            `).join('');
+
+            // Update module
+            const modules = {
+                1: {
+                    title: 'Modül 1: Enerji Verimliliğine Giriş',
+                    desc: 'Enerji verimliliği nedir? Konutlarda temel tüketim kaynakları ve tasarruf yöntemleri. (45 Dk)'
+                },
+                2: {
+                    title: 'Modül 2: Günlük Yaşamda Verimlilik',
+                    desc: 'Enerji etiketleri, fatura okuma, cihaz seçimi ve davranışsal değişiklikler. (60 Dk)'
+                },
+                3: {
+                    title: 'Modül 3: Kurumsal Liderlik',
+                    desc: 'Kurumsal enerji kültürü, rol model olma ve çevreyi bilgilendirme stratejileri. (1 Gün)'
+                }
+            };
+
+            const mod = modules[level] || modules[2];
+            document.getElementById('module-title').textContent = mod.title;
+            document.getElementById('module-desc').textContent = mod.desc;
+        }
+    </script>
+</body>
+
+</html>

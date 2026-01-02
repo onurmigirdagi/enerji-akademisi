@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enerji Akademisi</title>
+
+    <!-- Google Fonts: Inter for that clean modern app feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Login Section: Split Layout -->
+        <div id="login-section" class="login-container">
+            <!-- Left Side: Hero/Brand -->
+            <div class="login-hero">
+                <div class="hero-content">
+                    <div class="logo-box">
+                        <div class="windmill light">
+                            <div class="blade"></div>
+                            <div class="blade"></div>
+                            <div class="blade"></div>
+                        </div>
+                        <h1>Enerji Akademisi</h1>
+                    </div>
+                    <p class="hero-quote">"Öğrenme, geleceğe yapılan en iyi yatırımdır."</p>
+                </div>
+                <div class="hero-pattern"></div>
+            </div>
+
+            <!-- Right Side: Form -->
+            <div class="login-form-wrapper">
+                <div class="form-content">
+                    <h2>Giriş Yap</h2>
+                    <p class="subtitle">Eğitim platformunuza erişmek için hesabınızı doğrulayın.</p>
+
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="email-input">E-Posta Adresi</label>
+                            <input type="email" id="email-input" placeholder="isim@sirket.com" autocomplete="email"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password-input">Şifre</label>
+                            <input type="password" id="password-input" placeholder="••••••••" required>
+                        </div>
+
+                        <button type="submit" id="login-btn" class="primary-btn">
+                            <span class="btn-text">Giriş Yap</span>
+                            <div class="loader-spinner hidden"></div>
+                        </button>
+
+                        <button type="button" id="guest-btn" class="text-link">
+                            Misafir Girişi
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section: App Layout -->
+        <div id="dashboard-section" class="dashboard-container hidden">
+            <!-- Top Navigation -->
+            <nav class="top-nav">
+                <div class="nav-brand">
+                    <div class="windmill">
+                        <div class="blade"></div>
+                        <div class="blade"></div>
+                        <div class="blade"></div>
+                    </div>
+                    Enerji Akademisi
+                </div>
+                <div class="nav-right">
+                    <div class="search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Eğitim ara...">
+                    </div>
+                    <div class="user-menu">
+                        <a href="profile.html"
+                            style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+                            <span class="user-name" id="user-display-name">Kullanıcı</span>
+                            <div class="user-avatar"></div>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <div class="content-header">
+                    <h1>Genel Bakış</h1>
+                    <span class="date-badge">Bugün, 2 Ocak</span>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="stats-overview">
+                    <div class="stat-box">
+                        <div class="stat-title">Yenilenebilir Enerji</div>
+                        <div class="stat-number">%42</div>
+                        <div class="stat-desc">Türkiye Elektrik Üretim Payı</div>
+                    </div>
+                    <div class="stat-box green-theme">
+                        <div class="stat-title">Türkiye Ortalaması</div>
+                        <div class="stat-number">6.7 <span class="unit">Ton</span></div>
+                        <div class="stat-desc">Kişi Başı Yıllık CO2 Ayak İzi</div>
+                    </div>
+                    <div class="stat-box highlight">
+                        <div class="stat-title">Ulusal Hedef</div>
+                        <div class="stat-number">%16</div>
+                        <div class="stat-desc">2030 Enerji Tasarrufu Hedefi</div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Content Area -->
+
+                <!-- 1. Pre-Assessment CTA (Premium Design) -->
+                <div id="assessment-cta" class="cta-card">
+                    <!-- Background Decoration -->
+                    <div class="cta-bg-pattern"></div>
+
+                    <div class="cta-content">
+                        <div class="cta-icon-box">
+                            <div class="sun-icon">
+                                <div class="sun-core"></div>
+                            </div>
+                        </div>
+                        <div class="cta-text">
+                            <span class="cta-label">Eğitim Yolculuğunuz</span>
+                            <h3>Enerji Profilinizi Oluşturun</h3>
+                            <p>Bilgi ve davranış seviyenizi ölçerek size özel eğitim programı oluşturalım.</p>
+                        </div>
+                        <a href="assessment.html" class="cta-action-btn">
+                            Değerlendirmeyi Başlat
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 2. Course Grid (Hidden initially, shown after report) -->
+                <div id="personalized-grid" class="course-grid hidden">
+                    <!-- Configured via JS -->
+                </div>
+            </main>
+        </div>
+
+        <!-- ASSESSMENT MODAL -->
+        <div id="assessment-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3>Enerji Farkındalık Testi</h3>
+                    <span id="question-tracker">Soru 1/4</span>
+                </div>
+                <div class="modal-body">
+                    <h4 id="question-text">Soru metni buraya gelecek...</h4>
+                    <div id="options-container" class="options-list">
+                        <!-- Options injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORT MODAL -->
+        <div id="report-modal" class="modal-overlay hidden">
+            <div class="modal-card report-card">
+                <div class="modal-header center">
+                    <h3>Analiz Raporunuz Hazır</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="score-split">
+                        <!-- Knowledge Score Column -->
+                        <div class="score-box knowledge">
+                            <span class="score-label">BİLGİ SKORU</span>
+                            <span class="score-val" id="score-knowledge">0%</span>
+                            <div class="visual-bar-bg">
+                                <div id="bar-knowledge" class="visual-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Separator -->
+                        <div class="score-divider"></div>
+
+                        <!-- Behavior Score Column -->
+                        <div class="score-box behavior">
+                            <span class="score-label">DAVRANIŞ SKORU</span>
+                            <span class="score-val" id="score-behavior">0%</span>
+                            <div class="visual-bar-bg">
+                                <div id="bar-behavior" class="visual-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="deficiency-list">
+                        <h4>🔍 Detaylı Analiz & Gelişim Alanları</h4>
+                        <ul id="deficiency-items">
+                            <!-- Items injected by JS -->
+                        </ul>
+                    </div>
+
+                    <p class="plan-note">Sonuçlarınıza göre özel eğitim programınız hazırlandı.</p>
+                    <button id="create-plan-btn" class="primary-btn full-width">Kişiselleştirilmiş Programı
+                        Oluştur</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

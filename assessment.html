@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enerji Farkındalık Değerlendirmesi - Enerji Akademisi</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Assessment Page Specific Styles */
+        .assessment-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%);
+        }
+
+        .assessment-header {
+            background: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .assessment-header .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-bar-container {
+            width: 200px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .assessment-main {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .section-badge.behavior {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.5;
+            margin-bottom: 2rem;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .option-button {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .option-button:hover {
+            border-color: var(--primary);
+            background: #f0f9ff;
+        }
+
+        .option-button .option-letter {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3f4f6;
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .option-button:hover .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Likert Scale for Behavior Questions */
+        .likert-scale {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .likert-option {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 0.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .likert-option:hover {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .likert-option .score {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3f4f6;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .likert-option:hover .score {
+            background: #10b981;
+            color: white;
+        }
+
+        .likert-option .label {
+            font-size: 0.75rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Results Page */
+        .results-card {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .results-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .results-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .score-item {
+            padding: 1.5rem 2rem;
+            background: #f9fafb;
+            border-radius: 12px;
+            min-width: 150px;
+        }
+
+        .score-item.knowledge {
+            border-left: 4px solid var(--primary);
+        }
+
+        .score-item.behavior {
+            border-left: 4px solid #10b981;
+        }
+
+        .score-item .score-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-item .score-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .score-item.knowledge .score-value {
+            color: var(--primary);
+        }
+
+        .score-item.behavior .score-value {
+            color: #10b981;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .level-badge.level-1 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .level-badge.level-2 {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .level-badge.level-3 {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .module-recommendation {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+
+        .module-recommendation h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-recommendation p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .back-btn {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #4338ca;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            .likert-scale {
+                flex-wrap: wrap;
+            }
+
+            .likert-option {
+                flex: 0 0 calc(33% - 0.5rem);
+            }
+
+            .score-display {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="assessment-page">
+        <!-- Header -->
+        <header class="assessment-header">
+            <a href="index.html" class="brand">
+                <div class="windmill">
+                    <div class="blade"></div>
+                    <div class="blade"></div>
+                    <div class="blade"></div>
+                </div>
+                Enerji Akademisi
+            </a>
+            <div class="progress-indicator">
+                <div class="progress-bar-container">
+                    <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <span id="progress-text" class="progress-text">1 / 30</span>
+            </div>
+        </header>
+
+        <!-- Question Area -->
+        <main class="assessment-main">
+            <div id="question-card" class="question-card">
+                <span id="section-badge" class="section-badge">A. BİLGİ DÜZEYİ</span>
+                <p id="question-number" class="question-number">Soru 1</p>
+                <h2 id="question-text" class="question-text">Yükleniyor...</h2>
+
+                <div id="options-container" class="options-grid">
+                    <!-- Options will be injected by JS -->
+                </div>
+            </div>
+
+            <!-- Results (Hidden Initially) -->
+            <div id="results-card" class="results-card hidden">
+                <h2 class="results-title">Değerlendirme Tamamlandı!</h2>
+                <p class="results-subtitle">İşte enerji farkındalık profiliniz:</p>
+
+                <div class="score-display">
+                    <div class="score-item knowledge">
+                        <div class="score-label">Bilgi Skoru</div>
+                        <div id="result-knowledge" class="score-value">0/13</div>
+                    </div>
+                    <div class="score-item behavior">
+                        <div class="score-label">Davranış Skoru</div>
+                        <div id="result-behavior" class="score-value">0/85</div>
+                    </div>
+                </div>
+
+                <div id="level-badge" class="level-badge level-2">Düzey 2: Gelişmekte Olan</div>
+
+                <div class="module-recommendation">
+                    <h4 id="module-title">📚 Önerilen Eğitim Modülü</h4>
+                    <p id="module-desc">Modül açıklaması buraya gelecek...</p>
+                </div>
+
+                <button class="back-btn" onclick="window.location.href='index.html'">
+                    Ana Sayfaya Dön
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Full 30-Question Survey Data
+        const knowledgeQuestions = [
+            { text: "Enerji verimliliğinin temel amacı aşağıdakilerden hangisidir?", options: ["Enerji tüketimini tamamen ortadan kaldırmak", "Aynı hizmeti daha az enerji kullanarak sağlamak", "Enerji fiyatlarını düşürmek", "Yalnızca yenilenebilir enerji kullanmak"], correct: 1 },
+            { text: "Konutlarda toplam enerji tüketimi içinde en yüksek pay genellikle hangi alana aittir?", options: ["Aydınlatma", "Isıtma ve soğutma", "Elektronik cihazlar", "Küçük ev aletleri"], correct: 1 },
+            { text: "A++ enerji sınıfı bir elektrikli cihaz neyi ifade eder?", options: ["Yüksek güç tüketimini", "Enerji verimliliği yüksek ürünü", "Daha ucuz ürünü", "Kısa kullanım ömrünü"], correct: 1 },
+            { text: "LED ampuller, akkor flamanlı ampullere kıyasla yaklaşık ne kadar daha az enerji tüketir?", options: ["%10–20", "%30–40", "%70–80", "%90–100"], correct: 2 },
+            { text: "Bir elektrikli su ısıtıcısının ortalama güç tüketimi hangi aralıktadır?", options: ["200–400 W", "800–1000 W", "1500–2000 W", "3000 W üzeri"], correct: 2 },
+            { text: "Isı yalıtımı yapılmış bir binada aşağıdakilerden hangisi sağlanır?", options: ["Enerji tüketiminin artması", "Isı kayıplarının azaltılması", "Yalnızca yaz aylarında konfor", "Elektrik tesisatının korunması"], correct: 1 },
+            { text: "Enerji Kimlik Belgesi (EKB) hangi yapılar için zorunludur?", options: ["Motorlu taşıtlar", "Sanayi makineleri", "Binalar", "Elektronik cihazlar"], correct: 2 },
+            { text: "Stand-by (bekleme) modundaki cihazlar için hangisi doğrudur?", options: ["Enerji tüketmezler", "Düşük düzeyde ancak sürekli enerji tüketirler", "Sadece gece saatlerinde enerji tüketirler", "Yalnızca eski cihazlarda görülür"], correct: 1 },
+            { text: "Çift camlı pencerelerin temel faydası aşağıdakilerden hangisidir?", options: ["Aydınlatma ihtiyacını azaltması", "Isı ve ses kayıplarını azaltması", "Elektrik tüketimini artırması", "Nem oluşumunu tamamen engellemesi"], correct: 1 },
+            { text: "Klima kullanımında enerji verimliliği açısından önerilen iç ortam sıcaklığı kaç °C'dir?", options: ["16–18 °C", "18–20 °C", "24–26 °C", "28–30 °C"], correct: 2 },
+            { text: "Aşağıdakilerden hangisi pasif enerji verimliliği önlemi olarak değerlendirilir?", options: ["Yüksek verimli klima kullanımı", "Isı yalıtımı yapılması", "LED aydınlatma kullanımı", "Akıllı sayaç kurulumu"], correct: 1 },
+            { text: "Elektrikli cihazlarda bulunan enerji etiketi hangi bilgiyi sunar?", options: ["Sadece satış fiyatını", "Enerji tüketimi ve verimlilik sınıfını", "Garanti süresini", "Üretim yerini"], correct: 1 },
+            { text: "Aşağıdakilerden hangisi enerji tasarrufu sağlayan doğru bir uygulamadır?", options: ["Çamaşır makinesini yarım yükle çalıştırmak", "Tam dolu çalıştırmayı tercih etmek", "Yüksek sıcaklıkta yıkama yapmak", "Cihazları sürekli prizde bırakmak"], correct: 1 }
+        ];
+
+        const behaviorQuestions = [
+            { text: "Kullanmadığım elektrikli cihazların fişini prizden çekerim." },
+            { text: "Konutumda LED veya enerji tasarruflu ampuller kullanırım." },
+            { text: "Isıtma ve soğutma sistemlerini gereğinden yüksek ayarlamam." },
+            { text: "Beyaz eşyaları tam dolu çalıştırmaya özen gösteririm." },
+            { text: "Yeni bir cihaz satın alırken enerji verimliliği sınıfını dikkate alırım." },
+            { text: "Gün ışığından mümkün olduğunca faydalanırım." },
+            { text: "Elektrik ve doğal gaz faturalarımı düzenli olarak takip ederim." },
+            { text: "Klima çalışırken kapı ve pencereleri kapalı tutarım." },
+            { text: "Su ısıtıcısını yalnızca ihtiyaç kadar doldururum." },
+            { text: "Konutumda ısı yalıtımı konusunda bilgi sahibiyim." },
+            { text: "Enerji verimliliğine yönelik kamu duyuru ve kampanyalarını takip ederim." },
+            { text: "Yaz aylarında doğal havalandırmayı tercih ederim." },
+            { text: "Kamu binalarında enerji tasarrufuna yönelik uygulamalara uyarım." },
+            { text: "Çalışma ortamında gereksiz aydınlatmaları kapatırım." },
+            { text: "Enerji tasarrufu konusunda çevremdekileri bilinçlendirmeye çalışırım." },
+            { text: "Uzun süreli evden ayrılışlarda elektrikli cihazları kapatırım." },
+            { text: "Günlük yaşamımda enerji verimliliğini öncelikli bir konu olarak görürüm." }
+        ];
+
+        // Build combined questions array
+        const questions = [
+            ...knowledgeQuestions.map((q, i) => ({
+                type: 'knowledge',
+                number: i + 1,
+                text: q.text,
+                options: q.options,
+                correct: q.correct
+            })),
+            ...behaviorQuestions.map((q, i) => ({
+                type: 'behavior',
+                number: i + 14,
+                text: q.text
+            }))
+        ];
+
+        // State
+        let currentIndex = 0;
+        let scores = { knowledge: 0, behavior: 0 };
+
+        // DOM Elements
+        const questionCard = document.getElementById('question-card');
+        const resultsCard = document.getElementById('results-card');
+        const sectionBadge = document.getElementById('section-badge');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+
+        // Initialize
+        loadQuestion(0);
+
+        function loadQuestion(index) {
+            if (index >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const q = questions[index];
+            currentIndex = index;
+
+            // Update progress
+            const progress = ((index) / questions.length) * 100;
+            progressFill.style.width = `${progress}%`;
+            progressText.textContent = `${index + 1} / ${questions.length}`;
+
+            // Update section badge
+            if (q.type === 'knowledge') {
+                sectionBadge.textContent = 'A. BİLGİ DÜZEYİ';
+                sectionBadge.className = 'section-badge';
+            } else {
+                sectionBadge.textContent = 'B. DAVRANIŞ DÜZEYİ';
+                sectionBadge.className = 'section-badge behavior';
+            }
+
+            // Update question
+            questionNumber.textContent = `Soru ${index + 1}`;
+            questionText.textContent = q.text;
+
+            // Clear and render options
+            optionsContainer.innerHTML = '';
+
+            if (q.type === 'knowledge') {
+                // Multiple choice
+                const letters = ['A', 'B', 'C', 'D'];
+                q.options.forEach((opt, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-button';
+                    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+                    btn.onclick = () => handleKnowledgeAnswer(q, i);
+                    optionsContainer.appendChild(btn);
+                });
+            } else {
+                // Likert scale
+                optionsContainer.className = 'likert-scale';
+                const likertOptions = [
+                    { score: 5, label: 'Her Zaman' },
+                    { score: 4, label: 'Sıklıkla' },
+                    { score: 3, label: 'Bazen' },
+                    { score: 2, label: 'Nadiren' },
+                    { score: 1, label: 'Hiçbir Zaman' }
+                ];
+                likertOptions.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'likert-option';
+                    btn.innerHTML = `<span class="score">${opt.score}</span><span class="label">${opt.label}</span>`;
+                    btn.onclick = () => handleBehaviorAnswer(opt.score);
+                    optionsContainer.appendChild(btn);
+                });
+            }
+        }
+
+        function handleKnowledgeAnswer(question, answerIndex) {
+            if (answerIndex === question.correct) {
+                scores.knowledge += 1;
+            }
+            loadQuestion(currentIndex + 1);
+        }
+
+        function handleBehaviorAnswer(score) {
+            scores.behavior += score;
+            loadQuestion(currentIndex + 1);
+        }
+
+        function showResults() {
+            // Calculate total
+            const totalScore = scores.knowledge + scores.behavior;
+
+            // Determine level
+            let level;
+            if (totalScore <= 45) {
+                level = 1;
+            } else if (totalScore <= 70) {
+                level = 2;
+            } else {
+                level = 3;
+            }
+
+            // Save results to localStorage
+            const results = {
+                knowledge: scores.knowledge,
+                behavior: scores.behavior,
+                totalScore: totalScore,
+                level: level,
+                userName: 'Kullanıcı', // Could be retrieved from login
+                completedAt: new Date().toISOString()
+            };
+            localStorage.setItem('assessmentResults', JSON.stringify(results));
+
+            // Redirect to report page
+            window.location.href = 'report.html';
+        }
+    </script>
+</body>
+
+</html>
