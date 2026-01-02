@@ -198,6 +198,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
         displayName.textContent = formattedName;
 
+        // Persist User Identity for Profile Page
+        localStorage.setItem('appUser', JSON.stringify({
+            username: formattedName,
+            email: user.email
+        }));
+
         // Switch Views
         loginWrapper.style.opacity = '0';
         setTimeout(async () => {

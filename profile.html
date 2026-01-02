@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil - Enerji Akademisi</title>
 
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,6 +25,7 @@
             --bg: #f9fafb;
             --card-bg: #ffffff;
             --border: #e5e7eb;
+            --red: #ef4444;
         }
 
         * {
@@ -58,6 +62,12 @@
             text-decoration: none;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .back-btn {
             display: flex;
             align-items: center;
@@ -73,6 +83,25 @@
         .back-btn:hover {
             background: var(--bg);
             color: var(--primary);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--red);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .logout-btn:hover {
+            background: #fef2f2;
+            border-color: #fecaca;
         }
 
         /* Main Layout */
@@ -581,9 +610,14 @@
             </div>
             Enerji Akademisi
         </a>
-        <a href="index.html#dashboard" class="back-btn">
-            ← Ana Sayfa
-        </a>
+        <div class="header-actions">
+            <a href="index.html#dashboard" class="back-btn">
+                ← Ana Sayfa
+            </a>
+            <button id="logout-btn" class="logout-btn">
+                Çıkış Yap
+            </button>
+        </div>
     </header>
 
     <main class="main" id="content">
@@ -697,6 +731,28 @@
     </div>
 
     <script>
+        // Initialize Supabase
+        const supabaseUrl = 'https://hrshbpljdbyilwzuadoj.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhyc2hicGxqZGJ5aWx3enVhZG9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNjEyMTgsImV4cCI6MjA4MjkzNzIxOH0.AcGgZePLd0DXqNvvFULTwh9mXRZ7iI66kuhpf8bHkRs';
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Load User Identity
+        const appUser = JSON.parse(localStorage.getItem('appUser'));
+        if (appUser && appUser.username) {
+            document.getElementById('user-name').textContent = appUser.username;
+        }
+
+        // Logout Logic
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                await _supabase.auth.signOut();
+                localStorage.removeItem('appUser');
+                localStorage.removeItem('assessmentResults');
+                window.location.href = 'index.html';
+            });
+        }
+
         const data = JSON.parse(localStorage.getItem('assessmentResults'));
 
         if (!data) {
