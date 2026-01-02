@@ -492,7 +492,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Store for course generation
         // Store for course generation & Persist Data
         createPlanBtn.onclick = async () => {
-            console.log("createPlanBtn clicked. Current User:", currentUser);
+            console.log("createPlanBtn clicked.");
+
+            if (typeof level === 'undefined') {
+                alert("Hata: Seviye hesaplanamadı. Lütfen sayfayı yenileyip tekrar deneyin.");
+                return;
+            }
 
             const resultData = {
                 knowledge: scores.knowledge,
@@ -501,44 +506,46 @@ document.addEventListener('DOMContentLoaded', async () => {
                 level: level
             };
 
+            console.log("Saving Level:", level);
+            console.log("Saving Scores:", resultData);
+
             // 1. Local Storage (Always)
             localStorage.setItem('assessmentResults', JSON.stringify(resultData));
 
             // 2. Supabase (If Logged In)
             if (currentUser && !currentUser.is_anonymous) {
                 try {
-                    authBtn.textContent = 'Kaydediliyor...';
-                    createPlanBtn.textContent = 'Kaydediliyor...';
+                    // Update UI to show processing
+                    createPlanBtn.innerHTML = 'Kaydediliyor...';
                     createPlanBtn.disabled = true;
 
-                    // Use Upsert for reliability
+                    // Targeted UPDATE - assume profile exists (due to triggers/healing)
                     const { data, error } = await _supabase
                         .from('profiles')
-                        .upsert({
-                            id: currentUser.id,
-                            email: currentUser.email,
-                            username: currentUser.user_metadata?.username || currentUser.email.split('@')[0],
+                        .update({
                             scores: resultData,
                             level: level,
                             updated_at: new Date()
-                        }, { onConflict: 'id' }).select();
+                        })
+                        .eq('id', currentUser.id)
+                        .select();
 
-                    if (error) throw error;
+                    if (error) {
+                        throw error;
+                    }
 
-                    console.log('Results saved to Supabase successfully:', data);
-                    // Optional: Show a toast? 
-                    // alert('Sonuçlarınız başarıyla kaydedildi!'); 
+                    console.log('Update success:', data);
+                    alert('✅ Değerlendirme sonucunuz veritabanına başarıyla kaydedildi.');
 
                 } catch (err) {
-                    console.error('Failed to save to Supabase:', err);
-                    alert('Hata: Değerlendirme sonuçları veritabanına kaydedilemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.\n\nHata Detayı: ' + err.message);
-                    // We continue anyway because local storage is a fallback
+                    console.error('Update failed:', err);
+                    alert('❌ KAYIT HATASI: ' + err.message + '\n\nİnternet bağlantınızı kontrol edin.');
                 } finally {
                     createPlanBtn.textContent = 'Eğitim Planımı Oluştur';
                     createPlanBtn.disabled = false;
                 }
             } else {
-                console.log('User is guest or not logged in. Skipping DB save.');
+                console.log('Skipping DB save: User not logged in or guest.');
             }
 
             generateCourses(level, moduleName, moduleDesc);
