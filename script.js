@@ -12,6 +12,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dashboard = document.getElementById('dashboard-section');
     const displayName = document.getElementById('user-display-name');
 
+    // IMMEDIATE CHECK: Hide assessment CTA if results exist locally (prevents flash)
+    try {
+        const localResults = JSON.parse(localStorage.getItem('assessmentResults'));
+        if (localResults) {
+            document.getElementById('assessment-cta').classList.add('hidden');
+            const grid = document.getElementById('personalized-grid');
+            grid.classList.remove('hidden');
+            renderModuleCard(localResults.level, grid);
+        }
+    } catch (e) {
+        console.log('Local storage check failed', e);
+    }
+
     // Check for existing session on page load
     const { data: { session } } = await _supabase.auth.getSession();
 
