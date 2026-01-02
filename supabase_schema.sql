@@ -16,3 +16,24 @@ create policy "Users can insert own profile" on profiles
 drop policy if exists "Users can update own profile" on profiles;
 create policy "Users can update own profile" on profiles
   for update using (auth.uid() = id);
+
+-- Function to handle new user signup
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email, username, updated_at)
+  values (
+    new.id,
+    new.email,
+    new.raw_user_meta_data->>'username',
+    now()
+  );
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- Trigger to call the function on signup
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();

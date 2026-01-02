@@ -163,14 +163,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
                 if (error) throw error;
 
-                // Create profile entry
+                // Profile is created automatically by DB Trigger
                 if (data.user) {
-                    await _supabase.from('profiles').insert({
-                        id: data.user.id,
-                        username: email.split('@')[0],
-                        email: email,
-                        updated_at: new Date()
-                    });
                     handleLoginSuccess(data.user);
                 }
             }
