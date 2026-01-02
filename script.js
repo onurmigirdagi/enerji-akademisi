@@ -519,19 +519,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                     createPlanBtn.innerHTML = 'Kaydediliyor...';
                     createPlanBtn.disabled = true;
 
-                    // USE RPC (Server-Side Function) for maximum reliability
-                    console.log('Calling RPC update_assessment_results...');
-                    const { error } = await _supabase.rpc('update_assessment_results', {
+                    // USE RPC (Server-Side UPSERT)
+                    console.log('Calling RPC update_assessment_results (UPSERT)...');
+                    const { data, error } = await _supabase.rpc('update_assessment_results', {
                         p_scores: resultData,
-                        p_level: level
+                        p_level: level,
+                        p_email: currentUser.email,
+                        p_username: currentUser.user_metadata?.username || currentUser.email.split('@')[0]
                     });
 
                     if (error) {
                         throw error;
                     }
 
-                    console.log('RPC Success');
-                    alert('✅ Değerlendirme sonucunuz veritabanına başarıyla kaydedildi.');
+                    console.log('RPC Success. DB Row:', data);
+                    alert('✅ BAŞARILI: Verileriniz sunucuya kaydedildi!\n\nDB Kaydı: Seviye ' + data.level);
 
                 } catch (err) {
                     console.error('RPC failed:', err);

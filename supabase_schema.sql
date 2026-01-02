@@ -38,18 +38,33 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
--- RPC Function to safely update assessment results
+-- RPC Function to safely update assessment results (Robust UPSERT)
 create or replace function public.update_assessment_results(
   p_scores jsonb,
-  p_level int
+  p_level int,
+  p_email text,
+  p_username text
 )
-returns void as $$
+returns jsonb as $$
+declare
+  result_row jsonb;
 begin
-  update public.profiles
+  insert into public.profiles (id, email, username, scores, level, updated_at)
+  values (
+    auth.uid(),
+    p_email,
+    p_username,
+    p_scores,
+    p_level,
+    now()
+  )
+  on conflict (id) do update
   set 
-    scores = p_scores,
-    level = p_level,
+    scores = excluded.scores,
+    level = excluded.level,
     updated_at = now()
-  where id = auth.uid();
+  returning to_jsonb(profiles.*) into result_row;
+  
+  return result_row;
 end;
 $$ language plpgsql security definer;
