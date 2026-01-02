@@ -746,10 +746,19 @@
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', async () => {
-                await _supabase.auth.signOut();
-                localStorage.removeItem('appUser');
-                localStorage.removeItem('assessmentResults');
-                window.location.href = 'index.html';
+                console.log('Logout clicked');
+                try {
+                    logoutBtn.textContent = 'Çıkış...';
+                    const { error } = await _supabase.auth.signOut();
+                    if (error) throw error;
+                } catch (err) {
+                    console.error('Logout error:', err);
+                    // Force logout anyway
+                } finally {
+                    localStorage.removeItem('appUser');
+                    localStorage.removeItem('assessmentResults');
+                    window.location.href = 'index.html';
+                }
             });
         }
 
