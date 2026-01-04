@@ -1,6 +1,7 @@
 import { signOut } from '../auth.js';
 import { generateAnalysis, getLevelText } from '../quiz.js';
 import { MODULES } from '../config.js';
+import { openModuleModal } from '../ui.js';
 
 // Load User Identity
 const appUser = JSON.parse(localStorage.getItem('appUser'));
@@ -75,4 +76,12 @@ if (!data) {
     const mod = MODULES[level] || MODULES[2];
     document.getElementById('module-title').textContent = mod.title;
     document.getElementById('module-desc').textContent = mod.desc;
+
+    // Button Listener
+    const startBtn = document.getElementById('start-module-btn');
+    if (startBtn) {
+        startBtn.addEventListener('click', () => {
+            openModuleModal(level || 2);
+        });
+    }
 }
