@@ -167,10 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Guest Login
-    guestBtn.addEventListener('click', () => {
-        handleLoginSuccess({ email: 'misafir@user.com', user_metadata: { username: 'Misafir' }, is_anonymous: true });
-    });
+
 
     // Start Assessment
     const startAssessmentBtn = document.getElementById('start-assessment-btn');
