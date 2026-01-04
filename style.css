@@ -917,9 +917,16 @@ body {
     transform: translateX(4px);
 }
 
-/* Mobile Brand (Hidden on Desktop) */
+/* Mobile Brand (Strictly Hidden on Desktop) */
+@media (min-width: 769px) {
+    .mobile-brand {
+        display: none !important;
+    }
+}
+
 .mobile-brand {
-    display: none !important;
+    display: none;
+    /* Fallback */
     align-items: center;
     gap: 12px;
     padding: 2rem 2rem 1rem 2rem;
@@ -935,6 +942,13 @@ body {
 
 /* Mobile */
 @media (max-width: 768px) {
+    .login-container {
+        height: auto;
+        min-height: 100vh;
+        align-items: flex-start;
+        /* Ensure items start at top */
+    }
+
     .login-hero {
         display: none;
     }
@@ -945,15 +959,19 @@ body {
 
     .login-form-wrapper {
         width: 100%;
+        min-height: 100vh;
+        /* Full height */
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
+        /* Top align */
     }
 
     .form-content {
-        margin-top: auto;
+        margin-top: 0;
+        /*  spacing from logo */
         margin-bottom: auto;
-        padding-top: 0;
+        padding-top: 1rem;
     }
 
 
