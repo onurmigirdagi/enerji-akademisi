@@ -917,11 +917,31 @@ body {
     transform: translateX(4px);
 }
 
+/* Mobile Brand (Hidden on Desktop) */
+.mobile-brand {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2rem;
+    justify-content: center;
+}
+
+.mobile-brand h2 {
+    font-size: 1.5rem !important;
+    margin-bottom: 0 !important;
+    color: var(--primary);
+}
+
 /* Mobile */
 @media (max-width: 768px) {
     .login-hero {
         display: none;
     }
+
+    .mobile-brand {
+        display: flex;
+    }
+
 
     .login-form-wrapper {
         width: 100%;
@@ -938,7 +958,9 @@ body {
     .stats-overview {
         grid-template-columns: 1fr;
     }
-}/* --- Modal Styles --- */
+}
+
+/* --- Modal Styles --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -1054,7 +1076,9 @@ body {
     margin-top: 2rem;
     display: flex;
     justify-content: flex-end;
-}/* Video Embed */
+}
+
+/* Video Embed */
 .video-embed-container {
     width: 100%;
     aspect-ratio: 16 / 9;
