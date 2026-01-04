@@ -919,10 +919,10 @@ body {
 
 /* Mobile Brand (Hidden on Desktop) */
 .mobile-brand {
-    display: none;
+    display: none !important;
     align-items: center;
     gap: 12px;
-    padding: 1.5rem;
+    padding: 2rem 2rem 1rem 2rem;
     width: 100%;
     justify-content: flex-start;
 }
@@ -940,13 +940,22 @@ body {
     }
 
     .mobile-brand {
-        display: flex;
+        display: flex !important;
     }
-
 
     .login-form-wrapper {
         width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
     }
+
+    .form-content {
+        margin-top: auto;
+        margin-bottom: auto;
+        padding-top: 0;
+    }
+
 
     .top-nav {
         padding: 0 1rem;
