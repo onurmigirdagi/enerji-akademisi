@@ -5,6 +5,7 @@ import { getCurrentUser } from '../auth.js';
 // State
 let currentIndex = 0;
 let scores = { knowledge: 0, behavior: 0 };
+let currentSelection = null; // Track selection
 const questions = getFullQuestions();
 
 // DOM Elements
@@ -21,6 +22,7 @@ const progressText = document.getElementById('progress-text');
 loadQuestion(0);
 
 function loadQuestion(index) {
+    cleanUpNextButton();
     if (index >= questions.length) {
         showResults();
         return;
@@ -28,6 +30,7 @@ function loadQuestion(index) {
 
     const q = questions[index];
     currentIndex = index;
+    currentSelection = null; // Reset selection
 
     // Update progress
     const progress = ((index) / questions.length) * 100;
@@ -57,7 +60,9 @@ function loadQuestion(index) {
             const btn = document.createElement('button');
             btn.className = 'option-button';
             btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
-            btn.onclick = () => handleKnowledgeAnswer(q, i);
+
+            btn.onclick = () => selectKnowledgeOption(btn, q, i);
+
             optionsContainer.appendChild(btn);
         });
     } else {
@@ -74,25 +79,106 @@ function loadQuestion(index) {
             const btn = document.createElement('button');
             btn.className = 'likert-option';
             btn.innerHTML = `<span class="score">${opt.score}</span><span class="label">${opt.label}</span>`;
-            btn.onclick = () => handleBehaviorAnswer(opt.score);
+
+            btn.onclick = () => selectBehaviorOption(btn, opt.score);
+
             optionsContainer.appendChild(btn);
         });
     }
+
+    // Append Next Button (Hidden initially)
+    const nextBtnContainer = document.createElement('div');
+    nextBtnContainer.id = 'next-btn-container';
+    nextBtnContainer.className = 'next-btn-container hidden';
+    nextBtnContainer.style.marginTop = '2rem';
+    nextBtnContainer.style.textAlign = 'right';
+
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'primary-btn';
+    nextBtn.style.display = 'inline-flex';
+    nextBtn.style.width = 'auto';
+    nextBtn.innerHTML = `
+        Sıradaki Soru 
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 8px;">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    `;
+    nextBtn.onclick = handleNext;
+
+    nextBtnContainer.appendChild(nextBtn);
+    optionsContainer.parentNode.appendChild(nextBtnContainer); // Append to card, outside options grid
 }
 
-function handleKnowledgeAnswer(question, answerIndex) {
-    if (answerIndex === question.correct) {
-        scores.knowledge += 1;
+function cleanUpNextButton() {
+    const existing = document.getElementById('next-btn-container');
+    if (existing) existing.remove();
+}
+
+
+function selectKnowledgeOption(btn, question, answerIndex) {
+    // Visual update
+    const allBtns = optionsContainer.querySelectorAll('.option-button');
+    allBtns.forEach(b => {
+        b.style.borderColor = '#e5e7eb';
+        b.style.background = 'white';
+    });
+
+    btn.style.borderColor = '#4f46e5';
+    btn.style.background = '#eef2ff';
+
+    // Store selection
+    currentSelection = {
+        type: 'knowledge',
+        score: (answerIndex === question.correct) ? 1 : 0
+    };
+
+    showNextButton();
+}
+
+function selectBehaviorOption(btn, score) {
+    // Visual update
+    const allBtns = optionsContainer.querySelectorAll('.likert-option');
+    allBtns.forEach(b => {
+        b.style.borderColor = '#e5e7eb';
+        b.style.background = 'white';
+        b.querySelector('.score').style.background = '#f3f4f6';
+        b.querySelector('.score').style.color = '#6b7280';
+    });
+
+    // Highlight selected
+    btn.style.borderColor = '#10b981';
+    btn.style.background = '#ecfdf5';
+    btn.querySelector('.score').style.background = '#10b981';
+    btn.querySelector('.score').style.color = 'white';
+
+    // Store selection
+    currentSelection = {
+        type: 'behavior',
+        score: score
+    };
+
+    showNextButton();
+}
+
+function showNextButton() {
+    const container = document.getElementById('next-btn-container');
+    if (container) container.classList.remove('hidden');
+}
+
+function handleNext() {
+    if (!currentSelection) return;
+
+    if (currentSelection.type === 'knowledge') {
+        scores.knowledge += currentSelection.score;
+    } else {
+        scores.behavior += currentSelection.score;
     }
-    loadQuestion(currentIndex + 1);
-}
 
-function handleBehaviorAnswer(score) {
-    scores.behavior += score;
     loadQuestion(currentIndex + 1);
 }
 
 async function showResults() {
+    cleanUpNextButton(); // Clean up final button
     // Calculate total
     const totalScore = scores.knowledge + scores.behavior;
     const level = determineLevel(totalScore);
