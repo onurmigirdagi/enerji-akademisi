@@ -7,7 +7,7 @@
     <title>Enerji Akademisi - Kişisel Gelişim Platformu</title>
 
     <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase JS (Removed, using ES Modules) -->
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -135,83 +135,59 @@
 
                 <!-- Dynamic Content Area -->
 
-                <!-- 1. Pre-Assessment CTA (Premium Design) -->
-                <div id="assessment-cta" class="cta-card">
-                    <!-- Background Decoration -->
-                    <div class="cta-bg-pattern"></div>
-
-                    <div class="cta-content">
-                        <div class="cta-icon-box">
-                            <div class="sun-icon">
-                                <div class="sun-core"></div>
-                            </div>
-                        </div>
-                        <div class="cta-text">
-                            <span class="cta-label">Eğitim Yolculuğunuz</span>
-                            <h3>Enerji Profilinizi Oluşturun</h3>
-                            <p>Bilgi ve davranış seviyenizi ölçerek size özel eğitim programı oluşturalım.</p>
-                        </div>
-                        <a href="assessment.html" class="cta-action-btn">
-                            Değerlendirmeyi Başlat
-                        </a>
+                <!-- 1. Assessment CTA (Default Hidden to prevent flash) -->
+                <div id="assessment-cta" class="assessment-card hidden">
+                    <div class="icon-wrapper">
+                        <div class="icon-pulse"></div>
+                        <span class="icon">📊</span>
                     </div>
+                    <div class="assessment-text">
+                        <h3>Enerji Farkındalık Testi</h3>
+                        <p>Enerji tasarrufu potansiyelinizi keşfedin ve size özel eğitim programını oluşturun.</p>
+                    </div>
+                    <button id="start-assessment-btn" class="primary-btn assessment-btn">
+                        Değerlendirmeyi Başlat
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
                 </div>
 
                 <!-- 2. Course Grid (Hidden initially, shown after report) -->
-                <div id="personalized-grid" class="course-grid hidden">
+                <div id="personalized-grid" class="hidden">
                     <!-- Configured via JS -->
                 </div>
             </main>
         </div>
 
-        <!-- ASSESSMENT MODAL -->
-        <div id="assessment-modal" class="modal-overlay hidden">
-            <div class="modal-card">
+
+        <!-- Module Content Modal -->
+        <div id="module-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <button id="close-modal" class="close-btn">&times;</button>
                 <div class="modal-header">
-                    <h3>Enerji Farkındalık Testi</h3>
-                    <span id="question-tracker">Soru 1/4</span>
+                    <h2 id="modal-title">Modül Başlığı</h2>
                 </div>
-                <div class="modal-body">
-                    <h4 id="question-text">Soru metni buraya gelecek...</h4>
-                    <div id="options-container" class="options-grid"></div>
+                <!-- Video Embed Container -->
+                <div id="modal-video-embed" class="video-embed-container hidden"></div>
+                <!-- Video Placeholder -->
+                <div id="modal-video-placeholder" class="video-placeholder hidden">
+                    <div class="placeholder-icon">▶</div>
+                    <p>Video İçeriği (Yakında)</p>
+                </div>
+                <div id="modal-body" class="modal-body-text">
+                    <!-- Content injected here -->
+                </div>
+                <div class="modal-footer">
+                    <button id="complete-module-btn" class="primary-btn">Tamamla</button>
                 </div>
             </div>
         </div>
 
-        <!-- REPORT MODAL -->
-        <div id="report-modal" class="modal-overlay hidden">
-            <div class="modal-card report-card">
-                <div class="modal-header">
-                    <h3>Değerlendirme Raporu</h3>
-                </div>
-                <div class="modal-body">
-                    <div class="score-section">
-                        <div class="score-item">
-                            <span class="score-label">Bilgi Düzeyi</span>
-                            <div class="score-bar">
-                                <div id="bar-knowledge" class="bar-fill knowledge"></div>
-                            </div>
-                            <span id="score-knowledge" class="score-value">0/13</span>
-                        </div>
-                        <div class="score-item">
-                            <span class="score-label">Davranış Düzeyi</span>
-                            <div class="score-bar">
-                                <div id="bar-behavior" class="bar-fill behavior"></div>
-                            </div>
-                            <span id="score-behavior" class="score-value">0/85</span>
-                        </div>
-                    </div>
-                    <div class="deficiency-section">
-                        <h4>Sonuç ve Öneri</h4>
-                        <ul id="deficiency-items"></ul>
-                    </div>
-                    <button id="create-plan-btn" class="primary-btn">Eğitim Planımı Oluştur</button>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="js/pages/index.js"></script>
 </body>
 
 </html>

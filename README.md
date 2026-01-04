@@ -15,7 +15,10 @@ Enerji farkındalığını artırmayı amaçlayan interaktif bir eğitim ve kiş
 Bu proje statik HTML/CSS/JS dosyalarından oluşur.
 
 1.  Dosyaları indirin.
-2.  `index.html` dosyasını tarayıcınızda açın.
+2.  Proje dizininde bir terminal açın.
+3.  Bir yerel sunucu başlatın (örn: `npx serve` veya Python ile `python3 -m http.server`).
+4.  Tarayıcınızda sunucu adresini (genellikle `http://localhost:3000` veya `http://localhost:8000`) açın.
+    > **Not:** JavaScript modülleri (import/export) güvenlik nedeniyle doğrudan dosya sistemi (`file://`) üzerinden çalışmaz.
 
 ## GitHub Pages ile Yayına Alma
 
