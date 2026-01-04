@@ -80,7 +80,8 @@ if (!data) {
     const startBtn = document.getElementById('start-module-btn');
     if (startBtn) {
         startBtn.addEventListener('click', () => {
-            openModuleModal(level || 2);
+            const moduleId = level || 2;
+            window.location.href = `index.html?openModule=${moduleId}`;
         });
     }
 }
