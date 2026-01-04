@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const loginForm = document.getElementById('login-form');
     const authBtn = document.getElementById('auth-btn');
-    const guestBtn = document.getElementById('guest-btn');
     const toggleAuthBtn = document.getElementById('toggle-auth-btn');
     const authTitle = document.getElementById('auth-title');
     const authError = document.getElementById('auth-error');
@@ -296,46 +295,46 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-    // 4. Module Completion Handler
-    document.addEventListener('moduleCompleted', async (e) => {
-        const { moduleId } = e.detail;
-        
-        // Get current state
-        let localResults = JSON.parse(localStorage.getItem('assessmentResults'));
-        if (!localResults) return; // Should not happen if grid is visible
+// 4. Module Completion Handler
+document.addEventListener('moduleCompleted', async (e) => {
+    const { moduleId } = e.detail;
 
-        // Check if allowed to complete (must be current level)
-        if (moduleId !== localResults.level) {
-            console.warn('Cannot complete future or past modules out of order.');
-             // Optional: Allow re-completing past modules? For now, no specific logic needed as it won't increment level.
-            return;
-        }
+    // Get current state
+    let localResults = JSON.parse(localStorage.getItem('assessmentResults'));
+    if (!localResults) return; // Should not happen if grid is visible
 
-        // Increment Level
-        if (localResults.level < 3) {
-            localResults.level += 1;
-            localResults.updatedAt = new Date().toISOString();
-            
-            // Save Local
-            localStorage.setItem('assessmentResults', JSON.stringify(localResults));
-            
-            // Update UI
-            renderCourseGrid(localResults.level, personalizedGrid, true);
-            
-            // Sync Supabase (if logged in)
-            const user = await getCurrentUser();
-            if (user) {
-                try {
-                    await supabase.from('profiles').update({
-                        level: localResults.level,
-                        updated_at: new Date()
-                    }).eq('id', user.id);
-                } catch (err) {
-                    console.error('Failed to sync progress:', err);
-                }
+    // Check if allowed to complete (must be current level)
+    if (moduleId !== localResults.level) {
+        console.warn('Cannot complete future or past modules out of order.');
+        // Optional: Allow re-completing past modules? For now, no specific logic needed as it won't increment level.
+        return;
+    }
+
+    // Increment Level
+    if (localResults.level < 3) {
+        localResults.level += 1;
+        localResults.updatedAt = new Date().toISOString();
+
+        // Save Local
+        localStorage.setItem('assessmentResults', JSON.stringify(localResults));
+
+        // Update UI
+        renderCourseGrid(localResults.level, personalizedGrid, true);
+
+        // Sync Supabase (if logged in)
+        const user = await getCurrentUser();
+        if (user) {
+            try {
+                await supabase.from('profiles').update({
+                    level: localResults.level,
+                    updated_at: new Date()
+                }).eq('id', user.id);
+            } catch (err) {
+                console.error('Failed to sync progress:', err);
             }
-        } else {
-            console.log('Max level reached!');
-             // Already level 3.
         }
-    });
+    } else {
+        console.log('Max level reached!');
+        // Already level 3.
+    }
+});
