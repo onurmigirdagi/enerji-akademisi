@@ -14,7 +14,7 @@ export const MODULES = {
         title: 'Modül 1: Enerji Verimliliğine Giriş',
         desc: 'Enerji verimliliği nedir? Konutlarda temel tüketim kaynakları ve tasarruf yöntemleri. (45 Dk)',
         videoPlaceholder: false,
-        videoEmbed: '<video width="100%" height="100%" controls style="border-radius: 8px;"><source src="assets/videos/modül_1.mp4" type="video/mp4">Tarayıcınız video etiketini desteklemiyor.</video>',
+        videoEmbed: '<video width="100%" height="100%" controls style="border-radius: 8px;"><source src="assets/videos/module_1.mp4" type="video/mp4">Tarayıcınız video etiketini desteklemiyor.</video>',
         content: `
             <h4>1. Enerji Verimliliği Nedir?</h4>
             <p>Enerji verimliliği, birim hizmet veya ürün miktarında herhangi bir azalmaya neden olmadan, enerji tüketiminin azaltılmasıdır. Bu kavram, genellikle "enerji tasarrufu" ile karıştırılır, ancak aralarında temel bir fark vardır: </p>
@@ -51,7 +51,7 @@ export const MODULES = {
         title: 'Modül 2: Günlük Yaşamda Verimlilik',
         desc: 'Enerji etiketleri, fatura okuma, cihaz seçimi ve davranışsal değişiklikler. (60 Dk)',
         videoPlaceholder: false,
-        videoEmbed: '<video width="100%" height="100%" controls style="border-radius: 8px;"><source src="assets/videos/modül_2.mp4" type="video/mp4">Tarayıcınız video etiketini desteklemiyor.</video>',
+        videoEmbed: '<video width="100%" height="100%" controls style="border-radius: 8px;"><source src="assets/videos/module_2.mp4" type="video/mp4">Tarayıcınız video etiketini desteklemiyor.</video>',
         content: `
             <h4>1. Enerji Etiketlerini Doğru Okuma</h4>
             <p>Avrupa Birliği standartlarına göre enerji etiketleri A'dan G'ye kadar sınıflandırılır. Mart 2021 itibarıyla yeni düzenlemeye geçilmiştir:</p>
@@ -84,7 +84,7 @@ export const MODULES = {
         title: 'Modül 3: Kurumsal Liderlik',
         desc: 'Kurumsal enerji kültürü, rol model olma ve çevreyi bilgilendirme stratejileri. (1 Gün)',
         videoPlaceholder: false,
-        videoEmbed: '<video width="100%" height="100%" controls style="border-radius: 8px;"><source src="assets/videos/modül_3.mp4" type="video/mp4">Tarayıcınız video etiketini desteklemiyor.</video>',
+        videoEmbed: '<video width="100%" height="100%" controls style="border-radius: 8px;"><source src="assets/videos/module_3.mp4" type="video/mp4">Tarayıcınız video etiketini desteklemiyor.</video>',
         content: `
             <h4>1. İş Yerinde Enerji Kültürü Oluşturmak</h4>
             <p>Kurumsal verimlilik, bireysel farkındalıkla başlar ve kolektif bir kültüre dönüşür:</p>
