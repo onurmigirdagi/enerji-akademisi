@@ -1,10 +1,31 @@
 import { getCurrentUser, signIn, signUp, signOut, supabase } from '../auth.js';
-
-import { toggleLoading, renderCourseGrid } from '../ui.js';
+import { toggleLoading, renderCourseGrid, openModuleModal } from '../ui.js';
 
 let isLoginMode = true;
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+    // 0. Check for URL Params (Auto-open Module)
+    const urlParams = new URLSearchParams(window.location.search);
+    const openModuleId = urlParams.get('openModule');
+
+    if (openModuleId) {
+        // Wait a bit for UI to settle? Or just verify auth first?
+        // Actually, we can just try opening it. If logic requires user, it might be tricky if not logged in.
+        // But renderCourseGrid handles the grid. openModuleModal handles the modal.
+        // Let's postpone slightly to ensure DOM is ready? DOMContentLoaded is usually enough.
+
+        // Remove param from URL
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+
+        // Open Modal
+        // We might need to make sure MODULES are loaded or whatever context is needed.
+        // But openModuleModal imports MODULES from config.js directly in ui.js, so it should be fine.
+        setTimeout(() => {
+            openModuleModal(openModuleId);
+        }, 500); // Small delay to ensure smooth transition
+    }
 
     // DOM Elements
     const loginWrapper = document.getElementById('login-section');

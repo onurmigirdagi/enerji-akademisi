@@ -1,7 +1,6 @@
 import { signOut } from '../auth.js';
 import { generateAnalysis, getLevelText } from '../quiz.js';
 import { MODULES } from '../config.js';
-import { openModuleModal } from '../ui.js';
 
 // Load User Identity
 const appUser = JSON.parse(localStorage.getItem('appUser'));
